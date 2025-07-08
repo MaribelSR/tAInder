@@ -17,14 +17,10 @@ erDiagram
         string username
         string first_name
         string last_name
-        string gender
-        string sex
-        string orientation_sex
         int height
-        int age
+        date birthday
         string description
         datetime last_access
-        string photo
         int[] tags
     }
 
