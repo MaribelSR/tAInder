@@ -14,20 +14,20 @@ erDiagram
 
     PROFILE {
         int id PK
-        string username
-        string first_name
-        string last_name
+        string username(150)
+        string first_name(150)
+        string last_name(150)
         int height
         date birthday
-        string description
+        string description(1024)
         datetime last_access
         int[] tags
     }
 
     USER {
         int id PK
-        string email UK
-        string password
+        string email UK(254)
+        string password(128)
         int profile_id
     }
 
@@ -51,7 +51,6 @@ erDiagram
     MESSAGE {
         int id PK
         string message
-        int type
         datetime published
         boolean deleted
         int replied_message_id FK 
