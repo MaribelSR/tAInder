@@ -50,7 +50,7 @@ erDiagram
 
     MESSAGE {
         int id PK
-        string message
+        string msg
         datetime published
         boolean deleted
         int replied_message_id FK 
