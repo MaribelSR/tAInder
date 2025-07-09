@@ -14,20 +14,20 @@ erDiagram
 
     PROFILE {
         int id PK
-        string username(150)
-        string first_name(150)
-        string last_name(150)
+        string(150) username
+        string(150) first_name
+        string(150) last_name
         int height
         date birthday
-        string description(1024)
+        string(1024) description
         datetime last_access
         int[] tags
     }
 
     USER {
         int id PK
-        string email UK(254)
-        string password(128)
+        string(254) email UK
+        string(128) password
         int profile_id
     }
 
