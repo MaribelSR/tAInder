@@ -28,12 +28,14 @@ erDiagram
         int id PK
         string email UK
         string password
+        int profile_id
     }
 
     AI {
         int id PK
         string personality
         string schedule
+        int profile_id
         datetime last_execution
         datetime next_execution
     }

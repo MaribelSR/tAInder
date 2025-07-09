@@ -16,16 +16,18 @@ class Profile(models.Model):
 class User(models.Model):
     email = models.CharField(max_length=200, unique=True, null=False)
     password = models.CharField(max_length=20, null=False)
+    profile_id = models.IntegerField()
 
 class Ai(models.Model):
     personality = models.TextField()
     schedule = models.TextField()
     last_execution = models.DateTimeField()
     next_execution = models.DateTimeField()
+    profile_id = models.IntegerField()
 class Match(models.Model):
     #FK tendría que añadir algo :/ dudillas.
-    profile_id_a = models.IntegerChoices()
-    profile_id_b = models.IntegerChoices()
+    profile_id_a = models.IntegerField()
+    profile_id_b = models.IntegerField()
     do_match_a_b = models.BooleanField()
     do_match_b_a = models.BooleanField()
 
