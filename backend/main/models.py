@@ -12,8 +12,13 @@ class Profile(models.Model):
     height = models.IntegerField()
     birthday = models.DateField(null=False)
     description = models.TextField(max_length=1024)
-    last_access = models.DateTimeField()
+    last_access = models.DateTimeField(null=True)
     tags = models.ManyToManyField(Tag)
+
+    def __str__(self):
+        return "{username} ({last_name}, {first_name})".format(
+            username=self.username, last_name=self.last_name, first_name=self.first_name
+        )
 
 
 class User(models.Model):
