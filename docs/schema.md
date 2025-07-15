@@ -11,6 +11,7 @@ erDiagram
     MATCH }o--|| PROFILE : "do PROFILE_B"
     MATCH ||--o{ MESSAGE : contains
     TAG }o..o{ PROFILE : have
+    TAG }o--|| TAG_CATEGORY : contain
 
     PROFILE {
         int id PK
@@ -60,6 +61,13 @@ erDiagram
     
     TAG {
         int id PK
-        string name
+        string name UK
+        int tag_category_id FK
     }
+
+    TAG_CATEGORY {
+        int id PK
+        string name UK
+    }
+
 ```
