@@ -40,7 +40,7 @@ erDiagram
         datetime last_execution
         datetime next_execution
     }
-    
+
     MATCH {
         int id PK
         int profile_id_a FK
@@ -54,20 +54,19 @@ erDiagram
         string msg
         datetime published
         boolean deleted
-        int replied_message_id FK 
+        int replied_message_id FK
         int profile_id FK
         int match_id FK
     }
-    
+
     TAG {
         int id PK
-        string name UK
-        int tag_category_id FK
+        string name UK "UK with tag_category id"
+        int tag_category_id FK,UK "UK with name"
     }
 
     TAG_CATEGORY {
         int id PK
         string name UK
     }
-
 ```
