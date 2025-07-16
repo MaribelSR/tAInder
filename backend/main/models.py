@@ -21,13 +21,18 @@ def get_tag_category_id_default():
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=64, unique=True, null=False)
+    name = models.CharField(max_length=64, unique=False, null=False)
     category = models.ForeignKey(
         TagCategory, on_delete=models.CASCADE, default=get_tag_category_id_default
     )
 
+    class Meta:
+        unique_together = [
+            ["name", "category"],
+        ]
+
     def __str__(self):
-        return self.name
+        return "{category.name}: {name}".format(name=self.name, category=self.category)
 
 
 class Profile(models.Model):
