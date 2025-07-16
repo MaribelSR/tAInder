@@ -88,7 +88,7 @@ class Command(BaseCommand):
                 "guía turístico", "recepcionista", "guardia", "bailarin", "policia", "militar", "guardia civil", "estudiante", "sin empleo", "piloto", "chófer", 
                 "camionero", "cirujano", "astrónomo", "autónomo", "modelo", "azafato", "actor", "actriz", "músico", "otros". 
 
-                - Orientación sexual/identidad sexual/sexualidad: "heterosexual", "homosexual", "bisexual", "asexual", "androginosexual", "antrosexual", "bicurioso", "demisexuales",
+                - Sexualidad: "heterosexual", "homosexual", "bisexual", "asexual", "androginosexual", "antrosexual", "bicurioso", "demisexuales",
                 "poliamorosos", "polisexual", "sapiosexual", "trans", "género binario", "no binario", "queer", "agénero", "bigénero", "género fluido", 
                 "cisgénero", "intersexual", "transgénero", "transexual", "otros". 
 
@@ -134,4 +134,3 @@ class Command(BaseCommand):
             birthday=profile["birthday"],
             description=profile["description"],
         )
-        

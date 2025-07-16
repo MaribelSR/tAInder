@@ -1,8 +1,33 @@
 from django.db import models
 
 
+class TagCategory(models.Model):
+    name = models.CharField(max_length=64, unique=True, null=False)
+
+    def __str__(self):
+        return self.name
+
+
+def get_tag_category_id_default():
+    """
+    default_category_as_slices = TagCategory.objects.filter(id=1)
+    if len(default_category_as_slices) == 0:
+        default_category = TagCategory.objects.create(name="Hidden", id=1)
+        default_category_as_slices.append(default_category)
+    return default_category_as_slices[0]
+    """
+    default_category, _ = TagCategory.objects.get_or_create(name="Hidden", id=1)
+    return default_category.id
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=64, unique=True, null=False)
+    category = models.ForeignKey(
+        TagCategory, on_delete=models.CASCADE, default=get_tag_category_id_default
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class Profile(models.Model):
