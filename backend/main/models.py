@@ -4,6 +4,9 @@ from django.db import models
 class TagCategory(models.Model):
     name = models.CharField(max_length=64, unique=True, null=False)
 
+    class Meta:
+        verbose_name_plural = "Tag Categories"
+
     def __str__(self):
         return self.name
 
@@ -64,6 +67,9 @@ class Ai(models.Model):
     next_execution = models.DateTimeField()
     profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
+    class Meta:
+        verbose_name = "AI"
+
 
 class Match(models.Model):
     profile_a = models.ForeignKey(
@@ -80,6 +86,9 @@ class Match(models.Model):
     )
     do_match_a_b = models.BooleanField()
     do_match_b_a = models.BooleanField()
+
+    class Meta:
+        verbose_name_plural = "Matches"
 
 
 class Message(models.Model):
