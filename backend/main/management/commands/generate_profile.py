@@ -14,6 +14,9 @@ class Command(BaseCommand):
             type=int,
             help="Number of profiles to generate",
         )
+        parser.add_argument(
+            "--tags_sexuality", nargs="+", type=str, help="Tags for sexuality"
+        )
 
     def handle(self, *args, **options):
         """
@@ -68,9 +71,16 @@ class Command(BaseCommand):
                 """
             # TODO elegir 2 tags de categoría sexualidad.
             tagCategorySexuality = TagCategory.objects.get(name="Sexuality")
-            sexualitiesAsObjects = random.sample(
-                list(tagCategorySexuality.tag_set.all()), k=2
-            )
+            sexualitiesAsObjects = []
+            if len(options["tags_sexuality"]) > 0:
+                sexualitiesAsObjects = Tag.objects.filter(
+                    name__in=options["tags_sexuality"], category=tagCategorySexuality
+                )
+            else:
+                sexualitiesAsObjects = random.sample(
+                    list(tagCategorySexuality.tag_set.all()), k=2
+                )
+
             sexualitiesAsStrings = []
             for sexuality in sexualitiesAsObjects:
                 sexualitiesAsStrings.append(sexuality.name)
