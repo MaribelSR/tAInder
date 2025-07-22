@@ -34,7 +34,6 @@ erDiagram
 
     AI {
         int id PK
-        string personality
         string schedule
         int profile_id
         datetime last_execution

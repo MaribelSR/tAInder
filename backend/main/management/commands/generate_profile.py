@@ -56,6 +56,7 @@ class Command(BaseCommand):
                     "height": 175,
                     "birthday": "1990-05-15",
                     "description": "Descripción en primera persona...",
+                    "personality": 
                     }
 
                     Intrucciones específicas: 

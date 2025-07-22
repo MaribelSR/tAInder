@@ -32,12 +32,11 @@ class TagCategoryAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["email", "password", "profile"]
+    list_display = ["email", "profile"]
 
 
 class AiAdmin(admin.ModelAdmin):
     list_display = [
-        "personality",
         "schedule",
         "last_execution",
         "next_execution",

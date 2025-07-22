@@ -61,7 +61,6 @@ class User(models.Model):
 
 
 class Ai(models.Model):
-    personality = models.TextField()
     schedule = models.TextField()
     last_execution = models.DateTimeField()
     next_execution = models.DateTimeField()
