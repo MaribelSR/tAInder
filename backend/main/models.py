@@ -62,8 +62,8 @@ class User(models.Model):
 
 class Ai(models.Model):
     schedule = models.TextField()
-    last_execution = models.DateTimeField()
-    next_execution = models.DateTimeField()
+    last_execution = models.DateTimeField(null=True)
+    next_execution = models.DateTimeField(null=True)
     profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     class Meta:
