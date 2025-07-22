@@ -31,10 +31,39 @@ class TagCategoryAdmin(admin.ModelAdmin):
     inlines = [TagInline]
 
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = ["email", "password", "profile"]
+
+
+class AiAdmin(admin.ModelAdmin):
+    list_display = [
+        "personality",
+        "schedule",
+        "last_execution",
+        "next_execution",
+        "profile",
+    ]
+
+
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ["profile_a", "profile_b", "do_match_a_b", "do_match_b_a"]
+
+
+class MessageAdmin(admin.ModelAdmin):
+    list_display = [
+        "msg",
+        "published",
+        "deleted",
+        "replied_message",
+        "profile",
+        "match",
+    ]
+
+
 admin.site.register(Profile, ProfileAdmin)
-admin.site.register(Message)
-admin.site.register(Ai)
-admin.site.register(Match)
+admin.site.register(Message, MessageAdmin)
+admin.site.register(Ai, AiAdmin)
+admin.site.register(Match, MatchAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(TagCategory, TagCategoryAdmin)
-admin.site.register(User)
+admin.site.register(User, UserAdmin)
