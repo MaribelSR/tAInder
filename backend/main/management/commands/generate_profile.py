@@ -71,9 +71,8 @@ class Command(BaseCommand):
         prompt += prompt_tags
         prompt += self.generate_prompt_avoid_first_names()
         print(prompt)
-        # TODO url options
         response = requests.post(
-            url="http://localhost:11434/api/generate",
+            url=options["url"],
             json={
                 "model": "gemma3:latest",
                 "prompt": prompt,
@@ -179,6 +178,11 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--tags_sexuality", nargs="+", type=str, help="Tags for sexuality"
+        )
+        parser.add_argument(
+            "--url",
+            default="http://localhost:11434/api/generate",
+            help="URL to generate profiles",
         )
 
     def handle(self, *args, **options):
