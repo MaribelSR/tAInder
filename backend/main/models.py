@@ -37,6 +37,11 @@ class Tag(models.Model):
     def __str__(self):
         return "{category.name}: {name}".format(name=self.name, category=self.category)
 
+    def to_json(self):
+        return '{{"name": "{name}","category": "{category.name}"}}'.format(
+            name=self.name, category=self.category
+        )
+
 
 class Profile(models.Model):
     username = models.CharField(max_length=150, unique=True, null=False)
@@ -51,6 +56,18 @@ class Profile(models.Model):
     def __str__(self):
         return "{username} ({last_name}, {first_name})".format(
             username=self.username, last_name=self.last_name, first_name=self.first_name
+        )
+
+    def to_json(self):
+        return '{{"username": "{username}","first_name": "{first_name}","last_name": "{last_name}","height": {height},"birthday": "{birthday}","description": "{description}","last_access": "{last_access}","tags": [{tags}]}}'.format(
+            username=self.username,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            height=self.height,
+            birthday=self.birthday,
+            description=self.description,
+            last_access=self.last_access,
+            tags=", ".join([tag.to_json() for tag in self.tags.all()]),
         )
 
 
