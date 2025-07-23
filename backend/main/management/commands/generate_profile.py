@@ -9,30 +9,8 @@ import sys
 class Command(BaseCommand):
     def generate_prompt(self):
         """
-        "schedule": {
-                "monday": [
-                    {"start": "0:00", "end": "6:30", "description": "sleep"},
-                    {"start": "6:30", "end": "7:30", "description": "wake-up and breakfast"},
-                    {"start": "7:30", "end": "8:00", "description": "drive to work"},
-                    {"start": "8:00", "end": "14:00", "description": "work"},
-                    {"start": "14:00", "end": "15:00", "description": "lunch"},
-                    {"start": "15:00", "end": "18:00", "description": "free"}
-                    {"start": "18:00", "end": "20:00", "description": "gym"},
-                    {"start": "20:00", "end": "21:30", "description": "drive to home"},
-                    {"start": "21:30", "end": "22:00", "description": "dinner"},
-                    {"start": "22:00", "end": "23:00", "description": "free and watch TV"},
-                    {"start": "23:00", "end": "23:59", "description": "sleep"},
-                ],
-                "tuesday": [
-                    {"start": "0:00", "end": "6:30", "description": "sleep"},
-                    {"start": "6:30", "end": "7:30", "description": "wake-up and breakfast"},
-                    {"start": "7:30", "end": "8:00", "description": "drive to work"},
-                    {"start": "8:00", "end": "14:00", "description": "work"},
-                    ...
-                ],
-                ...
-            }
-            - El campo schedule estará basado en los tags, y debe de corresponder al perfil imaginado.
+
+        - El campo schedule estará basado en los tags, y debe de corresponder al perfil imaginado.
         """
         return """
             Genera un perfil para una aplicación para conocer personas 
@@ -169,11 +147,53 @@ class Command(BaseCommand):
             prompt += "\n-{}".format(profile["first_name"])
         return prompt + "\n"
 
+    def generate_schedule_for_profile(self, profile, options):
+        prompt = """
+            Genera una respuesta siguiendo el formato siguiente:
+            {
+                "schedule": {
+                    "monday": [
+                        {"start": "0:00", "end": "6:30", "description": "sleep"},
+                        {"start": "6:30", "end": "7:30", "description": "wake-up and breakfast"},
+                        {"start": "7:30", "end": "8:00", "description": "drive to work"},
+                        ...
+                        {"start": "21:30", "end": "22:00", "description": "dinner"},
+                        {"start": "22:00", "end": "23:00", "description": "free and watch TV"},
+                        {"start": "23:00", "end": "23:59", "description": "sleep"},
+                    ],
+                    ...
+                }
+            }
+        """
+        prompt += "\nBasandote en este perfil:\n"
+        prompt += profile.to_json()
+        print(prompt)
+
+        response = requests.post(
+            url=options["url"],
+            json={
+                "model": "gemma3:latest",
+                "prompt": prompt,
+                "stream": False,
+                "format": "json",
+            },
+        )
+        aIresponse = response.json()
+        if "response" not in aIresponse:
+            print(aIresponse)
+            raise CommandError("No se ha generado una respuesta del Ollama")
+        msg = aIresponse["response"]
+        print(msg)
+        # Parse json to python dict
+        schedule = json.loads(msg)
+        return schedule
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--num",
             default=1,
             type=int,
+            nargs="?",
             help="Number of profiles to generate",
         )
         parser.add_argument(
@@ -182,6 +202,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--url",
             default="http://localhost:11434/api/generate",
+            nargs="?",
             help="URL to generate profiles",
         )
 
@@ -201,7 +222,11 @@ class Command(BaseCommand):
             for tag in tags:
                 profileAsObject.tags.add(tag.id)
 
-            # Ai.objects.create(
-            #     schedule=profile["schedule"],
-            #     profile=profileAsObject,
-            # )
+            schedule = self.generate_schedule_for_profile(
+                profile=profileAsObject, options=options
+            )
+
+            Ai.objects.create(
+                schedule=schedule,
+                profile=profileAsObject,
+            )
