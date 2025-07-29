@@ -17,10 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from main.views import view_profiles
+from main.views import view_ai_profiles
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-    path("profiles/", view_profiles),
+    path("api/profiles/", view_ai_profiles),
 ]
