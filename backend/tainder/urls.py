@@ -17,10 +17,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from main.views import view_ai_profiles
+from rest_framework import routers
+from main.views import ProfileViewSet, TagViewSet, TagCategoryViewSet
+
+router = routers.DefaultRouter()
+router.register(r"profiles", ProfileViewSet)
+router.register(r"tags", TagViewSet)
+router.register(r"tag-categories", TagCategoryViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-    path("api/profiles/", view_ai_profiles),
+    path("api/", include(router.urls)),
 ]

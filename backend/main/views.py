@@ -1,35 +1,21 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from main.models import Profile
-import json
+from main.models import Profile, Tag, TagCategory
+from rest_framework import permissions, viewsets
+from main.serializers import ProfileSerializer, TagSerializer, TagCategorySerializer
 
 
-def view_ai_profiles(request):
-    """
-    Returns HttpResponse with all AI's profiles as Json.
-    """
-    """
-    Crear diccionario con el siguiente formato:
-    {"profiles":
-    [
-        {"first_name": "john","last_name": "doe"},
-        {"first_name": "jane","last_name": "smith"},
-    ]
-    }
-    """
-    profiles = Profile.objects.filter(user__isnull=True)
-    result = {
-        "profiles": [],
-    }
-    for profile in profiles:
-        result["profiles"].append(
-            {
-                "first_name": profile.first_name,
-                "last_name": profile.last_name,
-            }
-        )
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.filter(user__isnull=True)
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.AllowAny]
 
-    # Convert dict to Json as str.
-    response = json.dumps(result)
 
-    return HttpResponse(response)
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class TagCategoryViewSet(viewsets.ModelViewSet):
+    queryset = TagCategory.objects.all()
+    serializer_class = TagCategorySerializer
+    permission_classes = [permissions.AllowAny]
