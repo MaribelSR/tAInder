@@ -20,19 +20,20 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ["name", "category"]
+        fields = ["id", "name", "category"]
 
 
 class TagCategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TagCategory
-        fields = ["name"]
+        fields = ["id", "name"]
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "email",
             "password",
             "profile",
@@ -43,6 +44,7 @@ class AiSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ai
         fields = [
+            "id",
             "schedule",
             "last_execution",
             "next_execution",
@@ -54,6 +56,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Match
         fields = [
+            "id",
             "profile_a",
             "profile_b",
             "do_match_a_b",
@@ -65,6 +68,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Message
         fields = [
+            "id",
             "msg",
             "published",
             "deletd",
