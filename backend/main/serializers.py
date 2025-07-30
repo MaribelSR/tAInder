@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from main.models import Profile, Tag, TagCategory
+from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            "id",
             "username",
             "first_name",
             "last_name",
@@ -26,3 +27,48 @@ class TagCategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TagCategory
         fields = ["name"]
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "email",
+            "password",
+            "profile",
+        ]
+
+
+class AiSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Ai
+        fields = [
+            "schedule",
+            "last_execution",
+            "next_execution",
+            "profile",
+        ]
+
+
+class MatchSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Match
+        fields = [
+            "profile_a",
+            "profile_b",
+            "do_match_a_b",
+            "do_match_b_a",
+        ]
+
+
+class MessageSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Message
+        fields = [
+            "msg",
+            "published",
+            "deletd",
+            "replied_message",
+            "profile",
+            "match",
+        ]

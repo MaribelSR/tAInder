@@ -37,10 +37,10 @@ class UserAdmin(admin.ModelAdmin):
 
 class AiAdmin(admin.ModelAdmin):
     list_display = [
+        "profile",
         "schedule",
         "last_execution",
         "next_execution",
-        "profile",
     ]
 
 

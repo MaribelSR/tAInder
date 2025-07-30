@@ -18,12 +18,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from main.views import ProfileViewSet, TagViewSet, TagCategoryViewSet
+from main.views import (
+    ProfileViewSet,
+    TagViewSet,
+    TagCategoryViewSet,
+    UserViewSet,
+    AiViewSet,
+    MatchViewSet,
+    MessageViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register(r"profiles", ProfileViewSet)
 router.register(r"tags", TagViewSet)
 router.register(r"tag-categories", TagCategoryViewSet)
+router.register(r"users", UserViewSet)
+router.register(r"aies", AiViewSet)
+router.register(r"matches", MatchViewSet)
+router.register(r"messages", MessageViewSet)
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
