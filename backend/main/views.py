@@ -1,3 +1,5 @@
+import base64
+import pprint
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 from rest_framework import permissions, viewsets
 from main.serializers import (
@@ -10,6 +12,7 @@ from main.serializers import (
     MessageSerializer,
 )
 from django.http import HttpResponse
+from django.contrib.auth import authenticate
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -55,5 +58,20 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 
 def get_user_profile(request):
+    print(request.headers)
+    for header in request.headers:
+        if header.lower() != "authorization":
+            continue
+        auth_header = request.headers[header]
+        auth_header = auth_header.removeprefix("Basic ")
+        auth_header = base64.b64decode(auth_header).decode()
+        username = auth_header.split(":")[0]
+        password = auth_header.split(":")[1]
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            request.user = user
+    if not request.user.is_authenticated:
+        return HttpResponse("Unauthorized", status=401)
+
     user = User.objects.get(email=request.user.email)
-    return HttpResponse("Hola " + user.profile.first_name)
+    return HttpResponse(user.profile.to_json())
