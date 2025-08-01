@@ -1,3 +1,5 @@
+import base64
+import json
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 from rest_framework import permissions, viewsets
 from main.serializers import (
@@ -11,6 +13,7 @@ from main.serializers import (
 )
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -64,3 +67,23 @@ def get_user_profile(request):
         return HttpResponse(tainder_user.profile.to_json())
     except User.DoesNotExist:
         return HttpResponse("Unauthorized", status=401)
+
+
+@csrf_exempt
+def get_profile_by_user_email(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError as e:
+        return HttpResponse(status=400)
+
+    if "email" not in data or "password" not in data:
+        return HttpResponse(status=400)
+    email = data["email"]
+    password = data["password"]
+
+    try:
+        user = User.objects.get(email=email, password=password)
+    except User.DoesNotExist as e:
+        return HttpResponse(status=404)
+
+    return HttpResponse(user.profile.to_json())
