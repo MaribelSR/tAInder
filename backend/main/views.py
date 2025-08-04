@@ -1,5 +1,3 @@
-import base64
-import pprint
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 from rest_framework import permissions, viewsets
 from main.serializers import (
@@ -58,20 +56,11 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 
 def get_user_profile(request):
-    print(request.headers)
-    for header in request.headers:
-        if header.lower() != "authorization":
-            continue
-        auth_header = request.headers[header]
-        auth_header = auth_header.removeprefix("Basic ")
-        auth_header = base64.b64decode(auth_header).decode()
-        username = auth_header.split(":")[0]
-        password = auth_header.split(":")[1]
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            request.user = user
-    if not request.user.is_authenticated:
+    user = authenticate(request)
+    if user is None or not user.is_authenticated:
         return HttpResponse("Unauthorized", status=401)
-
-    user = User.objects.get(email=request.user.email)
-    return HttpResponse(user.profile.to_json())
+    try:
+        tainder_user = User.objects.get(email=user.email)
+        return HttpResponse(tainder_user.profile.to_json())
+    except User.DoesNotExist:
+        return HttpResponse("Unauthorized", status=401)
