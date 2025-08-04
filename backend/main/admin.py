@@ -44,6 +44,10 @@ class AiAdmin(admin.ModelAdmin):
     ]
 
 
+class MessageInLine(admin.TabularInline):
+    model = Message
+
+
 class MatchAdmin(admin.ModelAdmin):
     list_display = [
         "profile_a",
@@ -52,6 +56,7 @@ class MatchAdmin(admin.ModelAdmin):
         "do_match_b_a",
         "summary",
     ]
+    inlines = [MessageInLine]
 
 
 class MessageAdmin(admin.ModelAdmin):

@@ -76,6 +76,9 @@ class User(models.Model):
     password = models.CharField(max_length=128, null=False)
     profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self):
+        return self.email
+
 
 class Ai(models.Model):
     schedule = models.TextField()
@@ -122,3 +125,6 @@ class Message(models.Model):
     )
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False)
     match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+
+    def __str__(self):
+        return "{profile} - {msg}".format(profile=self.profile, msg=self.msg)
