@@ -45,7 +45,13 @@ class AiAdmin(admin.ModelAdmin):
 
 
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ["profile_a", "profile_b", "do_match_a_b", "do_match_b_a"]
+    list_display = [
+        "profile_a",
+        "profile_b",
+        "do_match_a_b",
+        "do_match_b_a",
+        "summary",
+    ]
 
 
 class MessageAdmin(admin.ModelAdmin):

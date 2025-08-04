@@ -102,6 +102,7 @@ class Match(models.Model):
     )
     do_match_a_b = models.BooleanField()
     do_match_b_a = models.BooleanField()
+    summary = models.TextField(null=True)
 
     class Meta:
         verbose_name_plural = "Matches"

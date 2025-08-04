@@ -61,6 +61,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             "profile_b",
             "do_match_a_b",
             "do_match_b_a",
+            "summary",
         ]
 
 

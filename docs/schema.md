@@ -46,6 +46,7 @@ erDiagram
         int profile_id_b FK
         boolean do_match_a_b
         boolean do_match_b_a
+        string(1024) summary
     }
 
     MESSAGE {
