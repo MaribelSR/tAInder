@@ -107,11 +107,18 @@ class Match(models.Model):
     class Meta:
         verbose_name_plural = "Matches"
 
+    def __str__(self):
+        return "Match: {profile_a} - {profile_b}".format(
+            profile_a=self.profile_a, profile_b=self.profile_b
+        )
+
 
 class Message(models.Model):
     msg = models.TextField()
     published = models.DateTimeField()
     deleted = models.BooleanField()
-    replied_message = models.ForeignKey("self", on_delete=models.SET_NULL, null=True)
+    replied_message = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True
+    )
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False)
     match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
