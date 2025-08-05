@@ -115,6 +115,15 @@ class Match(models.Model):
             profile_a=self.profile_a, profile_b=self.profile_b
         )
 
+    def to_json(self):
+        return '{{"profile_a": {profile_a_id}, "profile_b": {profile_b_id}, "do_match_a_b": {do_match_a_b}, "do_match_b_a": {do_match_b_a}, "summary": "{summary}"}}'.format(
+            profile_a_id=self.profile_a.pk,
+            profile_b_id=self.profile_b.pk,
+            do_match_a_b=self.do_match_a_b,
+            do_match_b_a=self.do_match_b_a,
+            summary=self.summary,
+        )
+
 
 class Message(models.Model):
     msg = models.TextField()

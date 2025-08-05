@@ -26,6 +26,7 @@ from main.views import (
     AiViewSet,
     MatchViewSet,
     MessageViewSet,
+    get_match_user,
     get_user_profile,
     get_profile_by_user_email,
 )
@@ -46,4 +47,5 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/current_user/profile/", get_user_profile),
     path("api/user_email/profile/", get_profile_by_user_email),
+    path("api/current_user/matches/", get_match_user),
 ]
