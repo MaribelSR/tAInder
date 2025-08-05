@@ -7,7 +7,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for match in Match.objects.filter(do_match_a_b=True, do_match_b_a=True):
             try:
-                last_msg = match.message_set.all().order_by("published")[0]
+                last_msg = match.message_set.exclude(deleted=True).order_by("published")[0]
                 # Skip Match that last Message is from Ai
                 if last_msg.profile.ai_set.first():
                     continue
