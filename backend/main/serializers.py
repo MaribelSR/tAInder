@@ -72,7 +72,7 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             "id",
             "msg",
             "published",
-            "deletd",
+            "deleted",
             "replied_message",
             "profile",
             "match",
