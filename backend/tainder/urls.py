@@ -32,13 +32,15 @@ from main.views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r"profiles", ProfileViewSet)
+# ViewSet que necesitan basename porque usan get_queryset().
+router.register(r"profiles", ProfileViewSet, basename="profile")
+router.register(r"users", UserViewSet, basename="user")
+router.register(r"matches", MatchViewSet, basename="match")
+router.register(r"messages", MessageViewSet, basename="message")
+# ViewSet que mantienen queryset estático
 router.register(r"tags", TagViewSet)
 router.register(r"tag-categories", TagCategoryViewSet)
-router.register(r"users", UserViewSet)
 router.register(r"aies", AiViewSet)
-router.register(r"matches", MatchViewSet)
-router.register(r"messages", MessageViewSet)
 
 
 urlpatterns = [
