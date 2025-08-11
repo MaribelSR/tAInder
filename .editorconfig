@@ -1,0 +1,5 @@
+# Configuración raíz
+root = true
+
+[*]
+end_of_line = lf
