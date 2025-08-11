@@ -63,6 +63,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             "do_match_b_a",
             "summary",
         ]
+        depth = 1
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
