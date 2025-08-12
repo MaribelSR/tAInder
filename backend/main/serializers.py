@@ -77,3 +77,4 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             "profile",
             "match",
         ]
+        depth = 1
