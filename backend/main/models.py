@@ -91,36 +91,35 @@ class Ai(models.Model):
 
 
 class Match(models.Model):
-    profile_a = models.ForeignKey(
+    ai_profile = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
         null=False,
-        related_name="matches_as_profile_a",
+        related_name="matches_as_ai_profile",
     )
-    profile_b = models.ForeignKey(
+    user_profile = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
         null=False,
-        related_name="matches_as_profile_b",
+        related_name="matches_as_user_profile",
     )
-    do_match_a_b = models.BooleanField()
-    do_match_b_a = models.BooleanField()
+    # Hago el cambio y lo dejo solo con do_match por mi logica anterior de siempre habra match si user quiere.
+    do_match = models.BooleanField()
     summary = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Matches"
 
     def __str__(self):
-        return "Match: {profile_a} - {profile_b}".format(
-            profile_a=self.profile_a, profile_b=self.profile_b
+        return "Match: {ai_profile} - {user_profile}".format(
+            ai_profile=self.ai_profile, user_profile=self.user_profile
         )
 
     def to_json(self):
-        return '{{"profile_a": {profile_a_id}, "profile_b": {profile_b_id}, "do_match_a_b": {do_match_a_b}, "do_match_b_a": {do_match_b_a}, "summary": "{summary}"}}'.format(
-            profile_a_id=self.profile_a.pk,
-            profile_b_id=self.profile_b.pk,
-            do_match_a_b=self.do_match_a_b,
-            do_match_b_a=self.do_match_b_a,
+        return '{{"ai_profile": {ai_profile_id}, "user_profile": {user_profile_id}, "do_match": {do_match}, "summary": "{summary}"}}'.format(
+            ai_profile_id=self.ai_profile.pk,
+            user_profile_id=self.user_profile.pk,
+            do_match=self.do_match,
             summary=self.summary,
         )
 

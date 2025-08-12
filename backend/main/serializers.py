@@ -57,10 +57,9 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         model = Match
         fields = [
             "id",
-            "profile_a",
-            "profile_b",
-            "do_match_a_b",
-            "do_match_b_a",
+            "ai_profile",
+            "user_profile",
+            "do_match",
             "summary",
         ]
         depth = 1

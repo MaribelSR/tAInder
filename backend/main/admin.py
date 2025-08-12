@@ -50,11 +50,9 @@ class MessageInLine(admin.TabularInline):
 
 class MatchAdmin(admin.ModelAdmin):
     list_display = [
-        "profile_a",
-        "profile_b",
-        "do_match_a_b",
-        "do_match_b_a",
-        "summary",
+        "ai_profile",
+        "user_profile",
+        "do_match" "summary",
     ]
     inlines = [MessageInLine]
 

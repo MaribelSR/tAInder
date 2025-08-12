@@ -7,6 +7,7 @@ erDiagram
     MESSAGE |o..o| MESSAGE : reply
     AI |o--|| PROFILE : uses
     USER |o--|| PROFILE : uses
+    %%Supongo que no hay que poner diferencia de perfiles, yo solamente pondria match y profile, AI siempre sera match a no ser que programemos que no%%
     MATCH }o--|| PROFILE : "do PROFILE_A"
     MATCH }o--|| PROFILE : "do PROFILE_B"
     MATCH ||--o{ MESSAGE : contains
@@ -42,10 +43,10 @@ erDiagram
 
     MATCH {
         int id PK
-        int profile_id_a FK
-        int profile_id_b FK
-        boolean do_match_a_b
-        boolean do_match_b_a
+        int ai_profile_id FK
+        int user_profile_id FK
+     %%He quitado el boolean do_match diferencia por perfiles.%%
+        boolean do_match
         string(1024) summary
     }
 

@@ -63,8 +63,7 @@ class AiViewSet(viewsets.ModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     serializer_class = MatchSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ["profile_a", "profile_b"]
-
+    filterset_fields = ["ai_profile", "user_profile"]
 
     def get_queryset(self):
         user = self.request.user
@@ -72,7 +71,7 @@ class MatchViewSet(viewsets.ModelViewSet):
             tainder_user = User.objects.get(email=user.email)
             # Solo podra ver los matches donde el usuerio es el profile_a o profile_b.
             return Match.objects.filter(
-                Q(profile_a__user=tainder_user) | Q(profile_b__user=tainder_user)
+                Q(ai_profile__user=tainder_user) | Q(user_profile__user=tainder_user)
             )
         except User.DoesNotExist:
             # No se devuelve ningún match si el usuario no existe.
@@ -89,7 +88,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             tainder_user = User.objects.get(email=user.email)
             # Solo podra ver los mensajes cuando hay match y el usuario esta entre los perfiles.
             user_matches = Match.objects.filter(
-                Q(profile_a__user=tainder_user) | Q(profile_b__user=tainder_user)
+                Q(ai_profile__user=tainder_user) | Q(user_profile__user=tainder_user)
             )
             return Message.objects.filter(match__in=user_matches)
         except User.DoesNotExist:
@@ -116,6 +115,7 @@ def get_match_user(request):
         tainder_user = User.objects.get(email=user.email)
     except User.DoesNotExist:
         return HttpResponse("Unauthorized", status=401)
+    #Para mi pierde la logica esta parte, simplemente es matches_user pero hay que ver como lo planteamos. Lo dejo para luego.
     matches_user_a = Match.objects.filter(profile_a=tainder_user.profile)
     matches_user_b = Match.objects.filter(profile_b=tainder_user.profile)
     """
