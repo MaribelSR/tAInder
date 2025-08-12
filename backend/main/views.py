@@ -1,4 +1,3 @@
-import base64
 import json
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 from rest_framework import permissions, viewsets
