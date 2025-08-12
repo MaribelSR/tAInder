@@ -81,6 +81,7 @@ class MatchViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ["match"]
 
     def get_queryset(self):
         user = self.request.user
