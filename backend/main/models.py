@@ -103,8 +103,7 @@ class Match(models.Model):
         null=False,
         related_name="matches_as_user_profile",
     )
-    # Hago el cambio y lo dejo solo con do_match por mi logica anterior de siempre habra match si user quiere.
-    do_match = models.BooleanField()
+    do_match = models.BooleanField(default=False)
     summary = models.TextField(null=True, blank=True)
 
     class Meta:

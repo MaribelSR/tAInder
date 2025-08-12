@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for match in Match.objects.filter(do_match_a_b=True, do_match_b_a=True):
+        for match in Match.objects.filter(do_match=True):
             try:
                 last_msg = match.message_set.exclude(deleted=True).order_by(
                     "-published"
@@ -16,17 +16,12 @@ class Command(BaseCommand):
                 if last_msg.profile.ai_set.first():
                     print("Skip {} because the last message its from Ai".format(match))
                     continue
-                # sacar perfil de la Ai
-                ai_profile = None
-                user_profile = None
-                if match.profile_a.ai_set.first():
-                    ai_profile = match.profile_a
-                    user_profile = match.profile_b
-                else:
-                    ai_profile = match.profile_b
-                    user_profile = match.profile_a
 
-                # TODO Llamada a la API de Ollama
+                ai_profile = match.ai_profile
+                user_profile = match.user_profile
+
+                # Llamada a la API de Ollama
+                # TODO mejorar prompt
                 prompt = """
                     Interpretando el siguiente perfil (no incluir descripción ni tags en la respuesta): {ai_profile}
                     Contesta al siguiente mensaje: {last_msg}

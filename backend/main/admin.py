@@ -52,7 +52,8 @@ class MatchAdmin(admin.ModelAdmin):
     list_display = [
         "ai_profile",
         "user_profile",
-        "do_match" "summary",
+        "do_match",
+        "summary",
     ]
     inlines = [MessageInLine]
 
