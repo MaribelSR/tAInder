@@ -108,44 +108,6 @@ def get_user_profile(request):
         return HttpResponse("Unauthorized", status=401)
 
 
-def get_match_user(request):
-    user = authenticate(request)
-    if user is None or not user.is_authenticated:
-        return HttpResponse("Unauthorized", status=401)
-    try:
-        tainder_user = User.objects.get(email=user.email)
-    except User.DoesNotExist:
-        return HttpResponse("Unauthorized", status=401)
-    #Para mi pierde la logica esta parte, simplemente es matches_user pero hay que ver como lo planteamos. Lo dejo para luego.
-    matches_user_a = Match.objects.filter(profile_a=tainder_user.profile)
-    matches_user_b = Match.objects.filter(profile_b=tainder_user.profile)
-    """
-    matches = Match.objects.filter(profile_a=tainder_user.profile) | Match.objects.filter(profile_b=tainder_user.profile)
-
-    Posibilidad de añadirlo así:
-        # Más eficiente con una sola query
-    matches = Match.objects.filter(
-        Q(profile_a=tainder_user.profile) | Q(profile_b=tainder_user.profile)
-    )
-    
-    matches_as_string = [match.to_json() for match in matches]
-    response = "[{}]".format(",".join(matches_as_string))
-    return HttpResponse(response)
-    """
-    matches = []
-    for match in matches_user_a:
-        matches.append(match)
-    for match in matches_user_b:
-        matches.append(match)
-    matches_as_string = []
-    for match in matches:
-        matches_as_string.append(match.to_json())
-    all_matches_as_single_string = ",".join(matches_as_string)
-    # response = "[{}]".format(",".join([match.to_json() for match in matches]))
-    response = "[{}]".format(all_matches_as_single_string)
-    return HttpResponse(response)
-
-
 @csrf_exempt
 def get_profile_by_user_email(request):
     try:
