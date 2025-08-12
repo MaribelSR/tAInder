@@ -7,9 +7,8 @@ erDiagram
     MESSAGE |o..o| MESSAGE : reply
     AI |o--|| PROFILE : uses
     USER |o--|| PROFILE : uses
-    %%Supongo que no hay que poner diferencia de perfiles, yo solamente pondria match y profile, AI siempre sera match a no ser que programemos que no%%
-    MATCH }o--|| PROFILE : "do PROFILE_A"
-    MATCH }o--|| PROFILE : "do PROFILE_B"
+    MATCH }o--|| PROFILE : "links to user Profile"
+    MATCH }o--|| PROFILE : "links to ai Profile"
     MATCH ||--o{ MESSAGE : contains
     TAG }o..o{ PROFILE : have
     TAG }o--|| TAG_CATEGORY : contain
@@ -45,7 +44,6 @@ erDiagram
         int id PK
         int ai_profile_id FK
         int user_profile_id FK
-     %%He quitado el boolean do_match diferencia por perfiles.%%
         boolean do_match
         string(1024) summary
     }
