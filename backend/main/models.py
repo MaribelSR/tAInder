@@ -144,10 +144,10 @@ class Task(models.Model):
         COMPLETED = "completed", "Completed"
         FAILED = "failed", "Failed"
 
-    def_name = models.CharField(max_length=1024, null=True)
+    def_name = models.CharField(max_length=1024, null=False)
     status = models.CharField(max_length=20, choices=Status, default=Status.QUEUED)
     created_at = models.DateTimeField(auto_now_add=True)
-    locked_at = models.DateTimeField(null=True)
-    unlocked_at = models.DateTimeField(null=True)
-    locked_by = models.CharField(max_length=1024, null=True)
+    locked_at = models.DateTimeField(null=True, blank=True)
+    unlocked_at = models.DateTimeField(null=True, blank=True)
+    locked_by = models.CharField(max_length=1024, null=True, blank=True)
     retries = models.IntegerField(default=0)

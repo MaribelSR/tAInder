@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Message, Ai, Match, Tag, TagCategory, User
+from .models import Profile, Message, Ai, Match, Tag, TagCategory, User, Task
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -69,6 +69,19 @@ class MessageAdmin(admin.ModelAdmin):
     ]
 
 
+class TaskAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "def_name",
+        "status",
+        "created_at",
+        "locked_at",
+        "locked_by",
+        "retries",
+        "unlocked_at",
+    ]
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Ai, AiAdmin)
@@ -76,3 +89,4 @@ admin.site.register(Match, MatchAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(TagCategory, TagCategoryAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Task, TaskAdmin)
