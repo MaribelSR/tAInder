@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 )
                 print(prompt)
                 response = requests.post(
-                    url="http://localhost:11434/api/generate",
+                    url=options["url"],
                     json={
                         "model": "gemma3:latest",
                         "prompt": prompt,
@@ -61,3 +61,11 @@ class Command(BaseCommand):
                 )
             except Exception as e:
                 print(e)
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--url",
+            default="http://localhost:11434/api/generate",
+            nargs="?",
+            help="URL to generate message reply",
+        )
