@@ -38,8 +38,10 @@ class Tag(models.Model):
         return "{category.name}: {name}".format(name=self.name, category=self.category)
 
     def to_json(self):
-        return '{{"name": "{name}","category": "{category.name}"}}'.format(
-            name=self.name, category=self.category
+        return '{{"id": {id}, "name": "{name}","category": "{category.name}"}}'.format(
+            id=self.id,
+            name=self.name,
+            category=self.category,
         )
 
 
@@ -59,7 +61,8 @@ class Profile(models.Model):
         )
 
     def to_json(self):
-        return '{{"username": "{username}","first_name": "{first_name}","last_name": "{last_name}","height": {height},"birthday": "{birthday}","description": "{description}","last_access": "{last_access}","tags": [{tags}]}}'.format(
+        return '{{"id": {id}, "username": "{username}","first_name": "{first_name}","last_name": "{last_name}","height": {height},"birthday": "{birthday}","description": "{description}","last_access": "{last_access}","tags": [{tags}]}}'.format(
+            id=self.id,
             username=self.username,
             first_name=self.first_name,
             last_name=self.last_name,
@@ -115,7 +118,8 @@ class Match(models.Model):
         )
 
     def to_json(self):
-        return '{{"ai_profile": {ai_profile_id}, "user_profile": {user_profile_id}, "do_match": {do_match}, "summary": "{summary}"}}'.format(
+        return '{{"id": {id}, "ai_profile": {ai_profile_id}, "user_profile": {user_profile_id}, "do_match": {do_match}, "summary": "{summary}"}}'.format(
+            id=self.id,
             ai_profile_id=self.ai_profile.pk,
             user_profile_id=self.user_profile.pk,
             do_match=self.do_match,
