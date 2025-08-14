@@ -4,6 +4,8 @@ import socket
 import sys
 import time
 import importlib
+import traceback
+
 from django.core.management.base import BaseCommand
 
 from main.models import Task
@@ -48,8 +50,8 @@ class Command(BaseCommand):
 
                     task.status = Task.Status.COMPLETED
                     print("Task #{} done!".format(task.id))
-                except Exception as e:
-                    print(e)
+                except:
+                    traceback.print_exc()
                     task.status = Task.Status.FAILED
                     print("Task #{} failed!".format(task.id))
                 finally:
