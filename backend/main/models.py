@@ -126,7 +126,7 @@ class Match(models.Model):
 class Message(models.Model):
     msg = models.TextField()
     published = models.DateTimeField(auto_now_add=True)
-    deleted = models.BooleanField()
+    deleted = models.BooleanField(default=False)
     replied_message = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )
