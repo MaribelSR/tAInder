@@ -2,7 +2,7 @@ from rest_framework import serializers
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 
 
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
@@ -17,19 +17,19 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class TagSerializer(serializers.HyperlinkedModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ["id", "name", "category"]
 
 
-class TagCategorySerializer(serializers.HyperlinkedModelSerializer):
+class TagCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TagCategory
         fields = ["id", "name"]
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
@@ -40,7 +40,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class AiSerializer(serializers.HyperlinkedModelSerializer):
+class AiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ai
         fields = [
@@ -52,7 +52,7 @@ class AiSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class MatchSerializer(serializers.HyperlinkedModelSerializer):
+class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
         fields = [
@@ -62,10 +62,9 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
             "do_match",
             "summary",
         ]
-        depth = 1
 
 
-class MessageSerializer(serializers.HyperlinkedModelSerializer):
+class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = [
@@ -77,4 +76,3 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             "profile",
             "match",
         ]
-        depth = 1
