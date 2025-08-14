@@ -82,6 +82,11 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ["match"]
 
+    def create(self, request, *args, **kwargs):
+        tainder_user = User.objects.get(email=request.user.email)
+        request.data["profile"] = tainder_user.profile.id
+        return super().create(request, *args, **kwargs)
+
     def get_queryset(self):
         user = self.request.user
         try:
