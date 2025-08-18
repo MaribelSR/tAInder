@@ -12,10 +12,21 @@ from main.models import Task
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--wait",
+            type=int,
+            default=10,
+            nargs="?",
+            help="How many seconds to wait after no tasks; default 10",
+        )
+
     def handle(self, *args, **options):
+        waiting = False
         worker_name = "{}_{}_{}".format(
             socket.gethostname(), os.getpid(), int(datetime.now().timestamp())
         )
+
         while True:
             task = (
                 Task.objects.exclude(
@@ -25,9 +36,13 @@ class Command(BaseCommand):
                 .first()
             )
             if not task:
-                print("Waiting 60s for tasks to be available...")
-                time.sleep(60)
+                if not waiting:
+                    waiting = True
+                    print("Waiting for tasks...")
+                time.sleep(options["wait"])
             else:
+                waiting = False
+
                 task.locked_by = worker_name
                 task.locked_at = datetime.now(timezone.utc)
                 task.status = Task.Status.PROCESSING
