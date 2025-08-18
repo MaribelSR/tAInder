@@ -5,6 +5,7 @@ import sys
 import time
 import importlib
 import traceback
+import signal
 
 from django.core.management.base import BaseCommand
 
@@ -12,6 +13,8 @@ from main.models import Task
 
 
 class Command(BaseCommand):
+    working = True
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--wait",
@@ -21,13 +24,20 @@ class Command(BaseCommand):
             help="How many seconds to wait after no tasks; default 10",
         )
 
+    def signal_handler(self, signum, frame):
+        self.working = False
+        print("Exiting...")
+
     def handle(self, *args, **options):
         waiting = False
         worker_name = "{}_{}_{}".format(
             socket.gethostname(), os.getpid(), int(datetime.now().timestamp())
         )
 
-        while True:
+        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
+        while self.working:
             task = (
                 Task.objects.exclude(
                     status__in=[Task.Status.COMPLETED, Task.Status.PROCESSING]
