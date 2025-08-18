@@ -3,3 +3,4 @@ requests==2.32.4
 django-filter==25.1
 djangorestframework==3.16.0
 Markdown==3.8.2
+tzdata==2025.2
