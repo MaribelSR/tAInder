@@ -62,7 +62,7 @@ class AiViewSet(viewsets.ModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     serializer_class = MatchSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ["ai_profile", "user_profile"]
+    filterset_fields = ["do_match", "ai_profile", "user_profile"]
 
     def get_queryset(self):
         user = self.request.user
