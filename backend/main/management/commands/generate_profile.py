@@ -1,9 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from main.models import Profile, Ai
-from main.tasks import (
-    generate_profile_and_tags,
-    generate_schedule_for_profile,
-)
+from main.tasks import generate_profile
 
 
 class Command(BaseCommand):
@@ -31,29 +27,6 @@ class Command(BaseCommand):
         url = options["url"]
         tags_sexuality = options.get("tags_sexuality")
         try:
-            for i in range(number):
-                profile, tags = generate_profile_and_tags(
-                    url=url, tags_sexuality=tags_sexuality
-                )
-
-                profileAsObject = Profile.objects.create(
-                    username=profile["username"],
-                    first_name=profile["first_name"],
-                    last_name=profile["last_name"],
-                    height=profile["height"],
-                    birthday=profile["birthday"],
-                    description=profile["description"],
-                )
-                for tag in tags:
-                    profileAsObject.tags.add(tag.id)
-
-                schedule = generate_schedule_for_profile(
-                    profile=profileAsObject, url=url
-                )
-
-                Ai.objects.create(
-                    schedule=schedule,
-                    profile=profileAsObject,
-                )
+            generate_profile(number=number, url=url, tags_sexuality=tags_sexuality)
         except Exception as e:
             raise CommandError(e)

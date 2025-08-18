@@ -1,8 +1,7 @@
-from main.models import Match, Message, Tag, TagCategory, Profile
-import requests
 import json
-from datetime import datetime, timezone
 import random
+import requests
+from main.models import Profile, Tag, TagCategory
 
 
 def generate_profile_prompt():
@@ -37,17 +36,15 @@ def generate_profile_prompt():
         """
 
 
-# DUDA: Cambio lo de opts por el parametro en si de tags_sexuality por tema de responsabilidad unica. Le he encontrado sentido.
-# Al final comentaba que asi cada función recibe solo que necesita. No lo veo mal.
-def generate_prompt_tags(tags_sexuality=None):
+def generate_prompt_tags(tags_sexuality=[]):
     # Genera un prompt para generar tags para el perfil.
     prompt = ""
     # Elige 2 tags de categoría sexualidad.
     tagCategorySexuality = TagCategory.objects.get(name="Sexuality")
     sexualitiesAsObjects = []
-    if tags_sexuality is not None and len(tags_sexuality) > 0:
-        sexualitiesAsObjects = Tag.objects.filter(
-            name__in=tags_sexuality, category=tagCategorySexuality
+    if len(tags_sexuality) > 0:
+        sexualitiesAsObjects = list(
+            Tag.objects.filter(name__in=tags_sexuality, category=tagCategorySexuality)
         )
     else:
         tagMale = Tag.objects.get(name="male")
@@ -123,7 +120,7 @@ def generate_prompt_avoid_first_names():
 
 
 def generate_profile_and_tags(
-    url="http://localhost:11434/api/generate", tags_sexuality=None
+    url="http://localhost:11434/api/generate", tags_sexuality=[]
 ):
     # Genera los datos del perfil usando la IA.
     prompt = generate_profile_prompt()
@@ -193,55 +190,3 @@ def generate_schedule_for_profile(profile, url="http://localhost:11434/api/gener
     # Parse json to python dict
     schedule = json.loads(msg)
     return schedule
-
-
-def generate_message_reply(url="http://localhost:11434/api/generate"):
-    for match in Match.objects.filter(do_match=True):
-        last_msg = match.message_set.exclude(deleted=True).order_by("-published")[0]
-        # Skip Match that last Message is from Ai
-        if last_msg.profile.ai_set.first():
-            print("Skip {} because the last message its from Ai".format(match))
-            continue
-
-        ai_profile = match.ai_profile
-        user_profile = match.user_profile
-
-        # Llamada a la API de Ollama
-        # TODO mejorar prompt
-        prompt = """
-                Interpretando el siguiente perfil (no incluir descripción ni tags en la respuesta): {ai_profile}
-                Contesta al siguiente mensaje: {last_msg}
-                Perteneciente al usuario: {user_profile}.
-                Tu respuesta debe seguir el siguiente formato: {{"response": "Contestación"}}
-            """.format(
-            ai_profile=ai_profile.to_json(),
-            last_msg=last_msg.msg,
-            user_profile=user_profile.to_json(),
-        )
-        print(prompt)
-        response = requests.post(
-            url=url,
-            json={
-                "model": "gemma3:latest",
-                "prompt": prompt,
-                "stream": False,
-                "format": "json",
-            },
-        )
-        ai_response = response.json()
-        if "response" not in ai_response:
-            print(ai_response)
-            raise Exception("No se ha generado una respuesta del Ollama")
-        msg = ai_response["response"]
-        msg = json.loads(msg)
-        msg = msg["response"]
-        print(msg)
-
-        Message.objects.create(
-            msg=msg,
-            published=datetime.now(timezone.utc),
-            deleted=False,
-            replied_message=last_msg,
-            profile=ai_profile,
-            match=match,
-        )
