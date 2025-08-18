@@ -37,7 +37,11 @@ def generate_profile(
 
 def generate_message_reply(url="http://localhost:11434/api/generate"):
     for match in Match.objects.filter(do_match=True):
-        last_msg = match.message_set.exclude(deleted=True).order_by("-published")[0]
+        last_msg = (
+            match.message_set.exclude(deleted=True).order_by("-published").first()
+        )
+        if not last_msg:
+            continue
         # Skip Match that last Message is from Ai
         if last_msg.profile.ai_set.first():
             print("Skip {} because the last message its from Ai".format(match))
