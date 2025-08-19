@@ -9,7 +9,7 @@ from main.tasks.generate_profile import (
 
 
 def generate_profile(
-    number=1, tags_sexuality=None, url="http://localhost:11434/api/generate"
+    number=1, tags_sexuality=[], url="http://localhost:11434/api/generate"
 ):
     for i in range(number):
         profile, tags = generate_profile_and_tags(

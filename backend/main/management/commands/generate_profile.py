@@ -13,7 +13,11 @@ class Command(BaseCommand):
             help="Number of profiles to generate",
         )
         parser.add_argument(
-            "--tags_sexuality", nargs="+", type=str, help="Tags for sexuality"
+            "--tags_sexuality",
+            nargs="+",
+            type=str,
+            help="Tags for sexuality",
+            default=[],
         )
         parser.add_argument(
             "--url",
@@ -25,7 +29,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         number = options["num"]
         url = options["url"]
-        tags_sexuality = options.get("tags_sexuality")
+        tags_sexuality = options.get("tags_sexuality", [])
         try:
             generate_profile(number=number, url=url, tags_sexuality=tags_sexuality)
         except Exception as e:
