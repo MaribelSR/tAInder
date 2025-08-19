@@ -6,6 +6,7 @@ import time
 import importlib
 import traceback
 import signal
+import json
 
 from django.core.management.base import BaseCommand
 
@@ -71,8 +72,11 @@ class Command(BaseCommand):
                     if module_name in sys.modules:
                         module = importlib.reload(module)
                     func = getattr(module, function_name)
-                    func()
-
+                    if task.def_kwargs is None or task.def_kwargs == "":
+                        func()
+                    else:
+                        kwargs = json.loads(task.def_kwargs)
+                        func(**kwargs)
                     task.status = Task.Status.COMPLETED
                     print("Task #{} done!".format(task.id))
                 except:

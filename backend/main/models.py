@@ -149,6 +149,7 @@ class Task(models.Model):
         FAILED = "failed", "Failed"
 
     def_name = models.CharField(max_length=1024, null=False)
+    def_kwargs = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=Status, default=Status.QUEUED)
     created_at = models.DateTimeField(auto_now_add=True)
     locked_at = models.DateTimeField(null=True, blank=True)
