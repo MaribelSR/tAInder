@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import os
 import socket
 import sys
@@ -16,6 +16,35 @@ from main.models import Task
 class Command(BaseCommand):
     working = True
 
+    def tasks_completed_cleanup(self, max_time_completed=60 * 60 * 24 * 30):
+        now = datetime.now(timezone.utc)
+        n, _ = Task.objects.filter(
+            status=Task.Status.COMPLETED,
+            unlocked_at__lt=now - timedelta(seconds=max_time_completed),
+        ).delete()
+        if n > 0:
+            print(
+                "Deleted {} completed tasks older than {} seconds".format(
+                    n, max_time_completed
+                )
+            )
+
+    def retry_stalled_tasks(self, max_time_stalled=60 * 60 * 24):
+        now = datetime.now(timezone.utc)
+        n = Task.objects.filter(
+            status=Task.Status.PROCESSING,
+            locked_at__lt=now - timedelta(seconds=max_time_stalled),
+        ).update(
+            status=Task.Status.QUEUED,
+            unlocked_at=now,
+        )
+        if n > 0:
+            print(
+                "Requeued {} stalled tasks older than {} seconds".format(
+                    n, max_time_stalled
+                )
+            )
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--wait",
@@ -23,6 +52,20 @@ class Command(BaseCommand):
             default=10,
             nargs="?",
             help="How many seconds to wait after no tasks; default 10",
+        )
+        parser.add_argument(
+            "--max_time_completed",
+            type=int,
+            default=60 * 60 * 24 * 30,
+            nargs="?",
+            help="Max time in seconds to keep completed tasks; default 2592000 (30 days)",
+        )
+        parser.add_argument(
+            "--max_time_stalled",
+            type=int,
+            default=60 * 60 * 24,
+            nargs="?",
+            help="Max time in seconds to retry stalled tasks; default 86400 (1 day)",
         )
 
     def signal_handler(self, signum, frame):
@@ -39,6 +82,10 @@ class Command(BaseCommand):
         signal.signal(signal.SIGTERM, self.signal_handler)
 
         while self.working:
+            self.tasks_completed_cleanup(
+                max_time_completed=options["max_time_completed"]
+            )
+            self.retry_stalled_tasks(max_time_stalled=options["max_time_stalled"])
             task = (
                 Task.objects.exclude(
                     status__in=[Task.Status.COMPLETED, Task.Status.PROCESSING]
