@@ -126,6 +126,9 @@ class Match(models.Model):
             summary=self.summary,
         )
 
+    def last_message(self):
+        return self.message_set.order_by("published").last()
+
 
 class Message(models.Model):
     msg = models.TextField()

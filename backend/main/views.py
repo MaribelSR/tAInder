@@ -93,6 +93,15 @@ class MatchViewSet(viewsets.ModelViewSet):
             # No se devuelve ningún match si el usuario no existe.
             return Match.objects.none()
 
+    @action(detail=True, methods=["get"], name="Last message")
+    def last_message(self, request, pk=None):
+        match = self.get_object()
+        last_message = match.last_message()
+        if last_message is None:
+            return Response(status=404)
+        serializer = MessageSerializer(last_message)
+        return Response(serializer.data)
+
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
