@@ -14,6 +14,8 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -30,6 +32,21 @@ class ProfileViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             # Si no existe el usuario, devuelve solo los perfiles de Ais.
             return Profile.objects.filter(user__isnull=True)
+
+    @action(detail=False, methods=["get"], name="Next AI Profile without Match")
+    def next_ai_profile_without_match(self, request):
+        tainder_user = User.objects.get(email=request.user.email)
+        ai_profiles_id_already_matched = Match.objects.filter(
+            user_profile=tainder_user.profile
+        ).values("ai_profile")
+        ai_profile = (
+            Profile.objects.filter(ai__isnull=False)
+            .exclude(id__in=ai_profiles_id_already_matched)
+            .order_by("?")
+            .first()
+        )
+        serializer = self.get_serializer(ai_profile)
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ModelViewSet):
