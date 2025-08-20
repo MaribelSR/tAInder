@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]  # Allow all hosts for development; change in production.
 
 INSTALLED_APPS = [
     "main.apps.MainConfig",
+    "pipeline.apps.PipelineConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
