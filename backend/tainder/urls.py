@@ -26,8 +26,6 @@ from main.views import (
     AiViewSet,
     MatchViewSet,
     MessageViewSet,
-    get_user_profile,
-    get_profile_by_user_email,
 )
 
 router = routers.DefaultRouter()
@@ -46,6 +44,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include(router.urls)),
-    path("api/current_user/profile/", get_user_profile),
-    path("api/user_email/profile/", get_profile_by_user_email),
 ]

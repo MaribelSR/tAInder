@@ -1,4 +1,3 @@
-import json
 from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 from rest_framework import permissions, viewsets
 from main.serializers import (
@@ -10,9 +9,6 @@ from main.serializers import (
     MatchSerializer,
     MessageSerializer,
 )
-from django.http import HttpResponse
-from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -64,10 +60,23 @@ class TagCategoryViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ["email"]
 
     def get_queryset(self):
         # Un usuario solo puede ver su propio usuario.
         return User.objects.filter(email=self.request.user.email)
+
+    @action(detail=False, methods=["get"], name="Current User")
+    def current(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response(status=401)
+        try:
+            tainder_user = User.objects.get(email=user.email)
+            serializer = self.get_serializer(tainder_user)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response(status=404)
 
 
 class AiViewSet(viewsets.ModelViewSet):
@@ -125,34 +134,3 @@ class MessageViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             # No devuelve mensaje al no ser uno de los perfiles de match.
             return Message.objetcs.none()
-
-
-def get_user_profile(request):
-    user = authenticate(request)
-    if user is None or not user.is_authenticated:
-        return HttpResponse("Unauthorized", status=401)
-    try:
-        tainder_user = User.objects.get(email=user.email)
-        return HttpResponse(tainder_user.profile.to_json())
-    except User.DoesNotExist:
-        return HttpResponse("Unauthorized", status=401)
-
-
-@csrf_exempt
-def get_profile_by_user_email(request):
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError as e:
-        return HttpResponse(status=400)
-
-    if "email" not in data or "password" not in data:
-        return HttpResponse(status=400)
-    email = data["email"]
-    password = data["password"]
-
-    try:
-        user = User.objects.get(email=email, password=password)
-    except User.DoesNotExist as e:
-        return HttpResponse(status=404)
-
-    return HttpResponse(user.profile.to_json())
