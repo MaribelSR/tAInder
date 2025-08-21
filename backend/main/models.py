@@ -108,6 +108,7 @@ class Message(models.Model):
     )
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False)
     match = models.ForeignKey(Match, on_delete=models.CASCADE, null=False)
+    summarized = models.BooleanField(default=False)
 
     def __str__(self):
         return "{profile} - {msg}".format(profile=self.profile, msg=self.msg)

@@ -73,4 +73,5 @@ class MessageSerializer(serializers.ModelSerializer):
             "replied_message",
             "profile",
             "match",
+            "summarized",
         ]

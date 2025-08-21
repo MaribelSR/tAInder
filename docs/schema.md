@@ -54,6 +54,7 @@ erDiagram
         int replied_message_id FK
         int profile_id FK
         int match_id FK
+        boolean summarized
     }
 
     TAG {

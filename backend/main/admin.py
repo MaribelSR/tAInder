@@ -64,6 +64,7 @@ class MessageAdmin(admin.ModelAdmin):
         "replied_message",
         "profile",
         "match",
+        "summarized",
     ]
 
 

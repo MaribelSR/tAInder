@@ -92,3 +92,47 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
             profile=ai_profile,
             match=match,
         )
+
+
+def generate_match_summary(url="http://localhost:11434/api/generate"):
+    for match in Match.objects.all():
+        messages = match.message_set.exclude(deleted=True, summarized=True).order_by(
+            "published"
+        )
+        if not messages:
+            continue
+
+        # Llamada a la API de Ollama
+        prompt = 'Resume la conversación y tu respuesta debe seguir el siguiente formato: {{"summary": "Resumen"}}\n'
+
+        if match.summary:
+            prompt += "Resumen previo: {summary}\n".format(summary=match.summary)
+        for msg in messages:
+            prompt += "{username}: {msg}\n".format(
+                username=msg.profile.username, msg=msg.msg
+            )
+
+        print(prompt)
+        response = requests.post(
+            url=url,
+            json={
+                "model": "gemma3:latest",
+                "prompt": prompt,
+                "stream": False,
+                "format": "json",
+            },
+        )
+        r = response.json()
+        if "response" not in r:
+            print(r)
+            raise Exception("No se ha generado un resumen del Ollama")
+        summary = r["response"]
+        summary = json.loads(summary)
+        summary = summary["summary"]
+
+        print(summary)
+        match.summary = summary
+        match.save()
+        for msg in messages:
+            msg.summarized = True
+            msg.save()
