@@ -37,13 +37,6 @@ class Tag(models.Model):
     def __str__(self):
         return "{category.name}: {name}".format(name=self.name, category=self.category)
 
-    def to_json(self):
-        return '{{"id": {id}, "name": "{name}","category": "{category.name}"}}'.format(
-            id=self.id,
-            name=self.name,
-            category=self.category,
-        )
-
 
 class Profile(models.Model):
     username = models.CharField(max_length=150, unique=True, null=False)
@@ -58,19 +51,6 @@ class Profile(models.Model):
     def __str__(self):
         return "{username} ({last_name}, {first_name})".format(
             username=self.username, last_name=self.last_name, first_name=self.first_name
-        )
-
-    def to_json(self):
-        return '{{"id": {id}, "username": "{username}","first_name": "{first_name}","last_name": "{last_name}","height": {height},"birthday": "{birthday}","description": "{description}","last_access": "{last_access}","tags": [{tags}]}}'.format(
-            id=self.id,
-            username=self.username,
-            first_name=self.first_name,
-            last_name=self.last_name,
-            height=self.height,
-            birthday=self.birthday,
-            description=self.description,
-            last_access=self.last_access,
-            tags=", ".join([tag.to_json() for tag in self.tags.all()]),
         )
 
 
@@ -113,15 +93,6 @@ class Match(models.Model):
     def __str__(self):
         return "Match: {ai_profile} - {user_profile}".format(
             ai_profile=self.ai_profile, user_profile=self.user_profile
-        )
-
-    def to_json(self):
-        return '{{"id": {id}, "ai_profile": {ai_profile_id}, "user_profile": {user_profile_id}, "do_match": {do_match}, "summary": "{summary}"}}'.format(
-            id=self.id,
-            ai_profile_id=self.ai_profile.pk,
-            user_profile_id=self.user_profile.pk,
-            do_match=self.do_match,
-            summary=self.summary,
         )
 
     def last_message(self):
