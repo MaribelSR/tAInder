@@ -34,10 +34,8 @@ erDiagram
 
     AI {
         int id PK
-        string schedule
         int profile_id
         datetime last_execution
-        datetime next_execution
     }
 
     MATCH {

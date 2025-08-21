@@ -45,9 +45,7 @@ class AiSerializer(serializers.ModelSerializer):
         model = Ai
         fields = [
             "id",
-            "schedule",
             "last_execution",
-            "next_execution",
             "profile",
         ]
 

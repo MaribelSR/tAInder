@@ -3,7 +3,6 @@ import requests
 import json
 from datetime import datetime, timezone
 from main.tasks.generate_profile import (
-    generate_schedule_for_profile,
     generate_profile_and_tags,
 )
 
@@ -27,10 +26,7 @@ def generate_profile(
         for tag in tags:
             profileAsObject.tags.add(tag.id)
 
-        schedule = generate_schedule_for_profile(profile=profileAsObject, url=url)
-
         Ai.objects.create(
-            schedule=schedule,
             profile=profileAsObject,
         )
 
