@@ -59,12 +59,14 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
                 Interpretando el siguiente perfil (no incluir descripción ni tags en la respuesta): {ai_profile}
                 Contesta al siguiente mensaje: {last_msg}
                 Perteneciente al usuario: {user_profile}.
-                Tu respuesta debe seguir el siguiente formato: {{"response": "Contestación"}}
             """.format(
             ai_profile=json_ai_profile.decode("utf-8"),
             last_msg=last_msg.msg,
             user_profile=json_user_profile.decode("utf-8"),
         )
+        if match.summary:
+            prompt += "Resumen previo: {summary}\n".format(summary=match.summary)
+        prompt += 'Tu respuesta debe ser un JSON con el siguiente formato: {"response": "Tu respuesta"}\n'
         print(prompt)
         response = requests.post(
             url=url,
