@@ -44,6 +44,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(ai_profile)
         return Response(serializer.data)
 
+    @action(detail=False, methods=["get"])
+    def current(self, request):
+        tainder_user = User.objects.get(email=request.user.email)
+        serializer = self.get_serializer(tainder_user.profile)
+        return Response(serializer.data)
+
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
