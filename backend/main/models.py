@@ -125,6 +125,9 @@ class Message(models.Model):
 
 @receiver(post_save, sender=Message)
 def message_post_save(sender, instance, created, raw, using, update_fields, **kwargs):
+    if created:
+        Task.objects.create(def_name="main.tasks.generate_match_summary")
+
     # Cuando instancia de Message haya sido creada por un usuario (no por AI):
     if created and instance.profile.is_from_user():
         # Crea tarea que ejecute generate_message_reply
