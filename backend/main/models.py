@@ -1,4 +1,7 @@
 from django.db import models
+from pipeline.models import Task
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class TagCategory(models.Model):
@@ -52,6 +55,12 @@ class Profile(models.Model):
         return "{username} ({last_name}, {first_name})".format(
             username=self.username, last_name=self.last_name, first_name=self.first_name
         )
+
+    def is_from_user(self):
+        return self.user_set.count() > 0
+
+    def is_from_ai(self):
+        return self.ai_set.count() > 0
 
 
 class User(models.Model):
@@ -112,3 +121,11 @@ class Message(models.Model):
 
     def __str__(self):
         return "{profile} - {msg}".format(profile=self.profile, msg=self.msg)
+
+
+@receiver(post_save, sender=Message)
+def message_post_save(sender, instance, created, raw, using, update_fields, **kwargs):
+    # Cuando instancia de Message haya sido creada por un usuario (no por AI):
+    if created and instance.profile.is_from_user():
+        # Crea tarea que ejecute generate_message_reply
+        Task.objects.create(def_name="main.tasks.generate_message_reply")
