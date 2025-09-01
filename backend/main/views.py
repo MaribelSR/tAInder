@@ -19,21 +19,18 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
         try:
-            # Obtener el User personalizado basado en el email del usuario
-            tainder_user = User.objects.get(email=user.email)
+            user = self.request.user
             # Devolver solo el usuario actual y perfiles de Ais.
-            return Profile.objects.filter(Q(user=tainder_user) | Q(user__isnull=True))
+            return Profile.objects.filter(Q(user=user) | Q(user__isnull=True))
         except User.DoesNotExist:
             # Si no existe el usuario, devuelve solo los perfiles de Ais.
             return Profile.objects.filter(user__isnull=True)
 
     @action(detail=False, methods=["get"], name="Next AI Profile without Match")
     def next_ai_profile_without_match(self, request):
-        tainder_user = User.objects.get(email=request.user.email)
         ai_profiles_id_already_matched = Match.objects.filter(
-            user_profile=tainder_user.profile
+            user_profile=request.user.profile
         ).values("ai_profile")
         ai_profile = (
             Profile.objects.filter(ai__isnull=False)
@@ -46,8 +43,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def current(self, request):
-        tainder_user = User.objects.get(email=request.user.email)
-        serializer = self.get_serializer(tainder_user.profile)
+        serializer = self.get_serializer(request.user.profile)
         return Response(serializer.data)
 
 
@@ -66,23 +62,15 @@ class TagCategoryViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ["email"]
 
     def get_queryset(self):
         # Un usuario solo puede ver su propio usuario.
-        return User.objects.filter(email=self.request.user.email)
+        return User.objects.filter(id=self.request.user.id)
 
     @action(detail=False, methods=["get"], name="Current User")
     def current(self, request):
-        user = request.user
-        if not user.is_authenticated:
-            return Response(status=401)
-        try:
-            tainder_user = User.objects.get(email=user.email)
-            serializer = self.get_serializer(tainder_user)
-            return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response(status=404)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
 
 class AiViewSet(viewsets.ModelViewSet):
@@ -97,13 +85,9 @@ class MatchViewSet(viewsets.ModelViewSet):
     filterset_fields = ["do_match", "ai_profile", "user_profile"]
 
     def get_queryset(self):
-        user = self.request.user
         try:
-            tainder_user = User.objects.get(email=user.email)
-            # Solo podra ver los matches donde el usuerio es el profile_a o profile_b.
-            return Match.objects.filter(
-                Q(ai_profile__user=tainder_user) | Q(user_profile__user=tainder_user)
-            )
+            # Solo podra ver los matches del usuario.
+            return Match.objects.filter(user_profile=self.request.user.profile)
         except User.DoesNotExist:
             # No se devuelve ningún match si el usuario no existe.
             return Match.objects.none()
@@ -124,18 +108,13 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_fields = ["match"]
 
     def create(self, request, *args, **kwargs):
-        tainder_user = User.objects.get(email=request.user.email)
-        request.data["profile"] = tainder_user.profile.id
+        request.data["profile"] = request.user.profile.id
         return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
-        user = self.request.user
         try:
-            tainder_user = User.objects.get(email=user.email)
             # Solo podra ver los mensajes cuando hay match y el usuario esta entre los perfiles.
-            user_matches = Match.objects.filter(
-                Q(ai_profile__user=tainder_user) | Q(user_profile__user=tainder_user)
-            )
+            user_matches = Match.objects.filter(user_profile=self.request.user.profile)
             return Message.objects.filter(match__in=user_matches)
         except User.DoesNotExist:
             # No devuelve mensaje al no ser uno de los perfiles de match.

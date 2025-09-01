@@ -15,27 +15,28 @@ erDiagram
 
     PROFILE {
         int id PK
-        string(150) username
-        string(150) first_name
-        string(150) last_name
         int height
         date birthday
         string(1024) description
-        datetime last_access
         int[] tags
     }
 
     USER {
         int id PK
-        string(254) email UK
-        string(128) password
+        string(150) username "inherited from Django AbstractUser"
+        string(150) first_name "inherited from Django AbstractUser"
+        string(150) last_name "inherited from Django AbstractUser"
+        string(254) email UK "inherited from Django AbstractUser"
+        string(128) password "inherited from Django AbstractBaseUser"
         int profile_id
     }
 
     AI {
         int id PK
+        string(150) username
+        string(150) first_name
+        string(150) last_name
         int profile_id
-        datetime last_execution
     }
 
     MATCH {

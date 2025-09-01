@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from main.tasks.generate_profile import (
     generate_profile_and_tags,
 )
-from main.serializers import ProfileSerializer
+from main.serializers import ProfileNestedSerializer
 from rest_framework.renderers import JSONRenderer
 
 
@@ -18,9 +18,6 @@ def generate_profile(
         )
 
         profileAsObject = Profile.objects.create(
-            username=profile["username"],
-            first_name=profile["first_name"],
-            last_name=profile["last_name"],
             height=profile["height"],
             birthday=profile["birthday"],
             description=profile["description"],
@@ -30,6 +27,9 @@ def generate_profile(
 
         Ai.objects.create(
             profile=profileAsObject,
+            username=profile["username"],
+            first_name=profile["first_name"],
+            last_name=profile["last_name"],
         )
 
 
@@ -50,13 +50,13 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
 
         # Llamada a la API de Ollama
         # TODO mejorar prompt
-        serializer_ai = ProfileSerializer(ai_profile)
+        serializer_ai = ProfileNestedSerializer(ai_profile)
         json_ai_profile = JSONRenderer().render(serializer_ai.data)
-        serializer_user = ProfileSerializer(user_profile)
+        serializer_user = ProfileNestedSerializer(user_profile)
         json_user_profile = JSONRenderer().render(serializer_user.data)
 
         prompt = """
-                Interpretando el siguiente perfil (no incluir descripción ni tags en la respuesta): {ai_profile}
+                Interpretando el siguiente perfil; teniendo en cuenta los tags de personalidad a la hora de responder el mensaje (no incluir descripción ni tags en la respuesta): {ai_profile}
                 Contesta al siguiente mensaje: {last_msg}
                 Perteneciente al usuario: {user_profile}.
             """.format(
@@ -110,9 +110,13 @@ def generate_match_summary(url="http://localhost:11434/api/generate"):
         if match.summary:
             prompt += "Resumen previo: {summary}\n".format(summary=match.summary)
         for msg in messages:
-            prompt += "{username}: {msg}\n".format(
-                username=msg.profile.username, msg=msg.msg
-            )
+            if msg.profile.is_from_user():
+                username = msg.profile.user_set.first().username
+            elif msg.profile.is_from_ai():
+                username = msg.profile.ai_set.first().username
+            else:
+                username = ""
+            prompt += "{username}: {msg}\n".format(username=username, msg=msg.msg)
 
         print(prompt)
         response = requests.post(

@@ -1,14 +1,11 @@
 from django.contrib import admin
 from .models import Profile, Message, Ai, Match, Tag, TagCategory, User
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.utils.translation import gettext_lazy as _
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = [
-        "username",
-        "first_name",
-        "last_name",
-    ]
-    ordering = ["username"]
+    pass
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -31,14 +28,58 @@ class TagCategoryAdmin(admin.ModelAdmin):
     inlines = [TagInline]
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ["email", "profile"]
+class UserAdmin(DjangoUserAdmin):
+    list_display = [
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "profile",
+        "is_staff",
+    ]
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (
+            _("Personal info"),
+            {"fields": ("first_name", "last_name", "email", "profile")},
+        ),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "usable_password",
+                    "password1",
+                    "password2",
+                    "profile",
+                ),
+            },
+        ),
+    )
 
 
 class AiAdmin(admin.ModelAdmin):
     list_display = [
+        "username",
+        "first_name",
+        "last_name",
         "profile",
-        "last_execution",
     ]
 
 

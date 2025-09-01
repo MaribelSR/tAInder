@@ -2,6 +2,7 @@ from django.db import models
 from pipeline.models import Task
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
 
 
 class TagCategory(models.Model):
@@ -42,19 +43,10 @@ class Tag(models.Model):
 
 
 class Profile(models.Model):
-    username = models.CharField(max_length=150, unique=True, null=False)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
     height = models.IntegerField()
     birthday = models.DateField(null=False)
     description = models.TextField(max_length=1024)
-    last_access = models.DateTimeField(null=True)
     tags = models.ManyToManyField(Tag)
-
-    def __str__(self):
-        return "{username} ({last_name}, {first_name})".format(
-            username=self.username, last_name=self.last_name, first_name=self.first_name
-        )
 
     def is_from_user(self):
         return self.user_set.count() > 0
@@ -62,18 +54,42 @@ class Profile(models.Model):
     def is_from_ai(self):
         return self.ai_set.count() > 0
 
+    def __str__(self):
+        if self.is_from_user():
+            user = self.user_set.first()
+            return "{username} ({last_name}, {first_name})".format(
+                username=user.username,
+                last_name=user.last_name,
+                first_name=user.first_name,
+            )
+        elif self.is_from_ai():
+            ai = self.ai_set.first()
+            return "{username} ({last_name}, {first_name})".format(
+                username=ai.username, last_name=ai.last_name, first_name=ai.first_name
+            )
+        else:
+            return str(self.id)
 
-class User(models.Model):
-    email = models.EmailField(max_length=254, unique=True, null=False)
-    password = models.CharField(max_length=128, null=False)
+
+class User(AbstractUser):
     profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.email
+        return "{username} ({last_name}, {first_name})".format(
+            username=self.username,
+            last_name=self.last_name,
+            first_name=self.first_name,
+        )
 
 
 class Ai(models.Model):
-    last_execution = models.DateTimeField(null=True)
+    username = models.CharField(
+        max_length=150,
+        unique=False,
+        default="",
+    )
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
 
     class Meta:

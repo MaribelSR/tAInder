@@ -1,7 +1,7 @@
 import json
 import random
 import requests
-from main.models import Profile, Tag, TagCategory
+from main.models import Tag, TagCategory, Ai
 
 
 def generate_profile_prompt():
@@ -114,8 +114,8 @@ def generate_prompt_tags(tags_sexuality=[]):
 def generate_prompt_avoid_first_names():
     # Evita que se genere nombres ya existentes.
     prompt = "\nIntenta evitar los siguientes nombres:"
-    for profile in Profile.objects.values("first_name").distinct():
-        prompt += "\n-{}".format(profile["first_name"])
+    for ai in Ai.objects.values("first_name").distinct():
+        prompt += "\n-{}".format(ai["first_name"])
     return prompt + "\n"
 
 

@@ -7,9 +7,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             "id",
-            "username",
-            "first_name",
-            "last_name",
             "height",
             "birthday",
             "description",
@@ -17,16 +14,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ["id", "name", "category"]
-
-
 class TagCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TagCategory
         fields = ["id", "name"]
+
+
+class TagSerializer(serializers.ModelSerializer):
+    category = TagCategorySerializer()
+
+    class Meta:
+        model = Tag
+        fields = ["id", "name", "category"]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -37,6 +36,9 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "profile",
+            "username",
+            "first_name",
+            "last_name",
         ]
 
 
@@ -45,9 +47,21 @@ class AiSerializer(serializers.ModelSerializer):
         model = Ai
         fields = [
             "id",
-            "last_execution",
             "profile",
+            "username",
+            "first_name",
+            "last_name",
         ]
+
+
+class ProfileNestedSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True)
+    user_set = UserSerializer(many=True)
+    ai_set = AiSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
 
 
 class MatchSerializer(serializers.ModelSerializer):
