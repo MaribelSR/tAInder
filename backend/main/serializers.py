@@ -64,6 +64,28 @@ class ProfileNestedSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ProfilePublicSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        tags_to_exclude_as_objects = Tag.objects.filter(
+            category__name__in=[
+                "Hidden",
+                "Personality",
+            ]
+        )
+
+        tags_to_exclude_as_list = []
+        for t in tags_to_exclude_as_objects:
+            tags_to_exclude_as_list.append(t.id)
+
+        ret = super().to_representation(instance)
+        ret["tags"] = set(ret["tags"]) - set(tags_to_exclude_as_list)
+        return ret
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
