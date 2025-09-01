@@ -8,15 +8,28 @@ from main.serializers import (
     AiSerializer,
     MatchSerializer,
     MessageSerializer,
+    ProfilePublicSerializer,
 )
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = ProfilePublicSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = self.get_queryset()
+        profile = get_object_or_404(queryset, pk=pk)
+        serializer = ProfilePublicSerializer(profile)
+        return Response(serializer.data)
 
     def get_queryset(self):
         try:
