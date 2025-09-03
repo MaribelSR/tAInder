@@ -98,8 +98,10 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
 
 def generate_match_summary(url="http://localhost:11434/api/generate"):
     for match in Match.objects.all():
-        messages = match.message_set.exclude(deleted=True, summarized=True).order_by(
-            "published"
+        messages = (
+            match.message_set.exclude(deleted=True)
+            .exclude(summarized=True)
+            .order_by("published")
         )
         if not messages:
             continue
