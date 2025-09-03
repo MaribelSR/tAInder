@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,5 +141,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-TAINDER_OLLAMA_URL = "http://localhost:11434/api/generate"
-TAINDER_OLLAMA_MODEL = "gemma3:latest"
+TAINDER_OLLAMA_URL = os.environ.get(
+    "TAINDER_OLLAMA_URL", "http://localhost:11434/api/generate"
+)
+TAINDER_OLLAMA_MODEL = os.environ.get("TAINDER_OLLAMA_MODEL", "gemma3:latest")

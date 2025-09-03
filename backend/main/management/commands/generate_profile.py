@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from main.tasks import generate_profile
+from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -21,7 +22,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--url",
-            default="http://localhost:11434/api/generate",
+            default=settings.TAINDER_OLLAMA_URL,
             nargs="?",
             help="URL to generate profiles",
         )
