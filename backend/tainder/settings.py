@@ -139,3 +139,6 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend",
     ]
 }
+
+TAINDER_OLLAMA_URL = "http://localhost:11434/api/generate"
+TAINDER_OLLAMA_MODEL = "gemma3:latest"

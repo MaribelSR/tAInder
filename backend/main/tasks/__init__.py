@@ -7,11 +7,10 @@ from main.tasks.generate_profile import (
 )
 from main.serializers import ProfileNestedSerializer
 from rest_framework.renderers import JSONRenderer
+from django.conf import settings
 
 
-def generate_profile(
-    number=1, tags_sexuality=[], url="http://localhost:11434/api/generate"
-):
+def generate_profile(number=1, tags_sexuality=[], url=settings.TAINDER_OLLAMA_URL):
     for i in range(number):
         profile, tags = generate_profile_and_tags(
             url=url, tags_sexuality=tags_sexuality
@@ -33,7 +32,7 @@ def generate_profile(
         )
 
 
-def generate_message_reply(url="http://localhost:11434/api/generate"):
+def generate_message_reply(url=settings.TAINDER_OLLAMA_URL):
     for match in Match.objects.filter(do_match=True):
         last_msg = (
             match.message_set.exclude(deleted=True).order_by("-published").first()
@@ -71,7 +70,7 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
         response = requests.post(
             url=url,
             json={
-                "model": "gemma3:latest",
+                "model": settings.TAINDER_OLLAMA_MODEL,
                 "prompt": prompt,
                 "stream": False,
                 "format": "json",
@@ -96,7 +95,7 @@ def generate_message_reply(url="http://localhost:11434/api/generate"):
         )
 
 
-def generate_match_summary(url="http://localhost:11434/api/generate"):
+def generate_match_summary(url=settings.TAINDER_OLLAMA_URL):
     for match in Match.objects.all():
         messages = (
             match.message_set.exclude(deleted=True)
@@ -124,7 +123,7 @@ def generate_match_summary(url="http://localhost:11434/api/generate"):
         response = requests.post(
             url=url,
             json={
-                "model": "gemma3:latest",
+                "model": settings.TAINDER_OLLAMA_MODEL,
                 "prompt": prompt,
                 "stream": False,
                 "format": "json",

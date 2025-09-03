@@ -2,6 +2,7 @@ import json
 import random
 import requests
 from main.models import Tag, TagCategory, Ai
+from django.conf import settings
 
 
 def generate_profile_prompt():
@@ -119,9 +120,7 @@ def generate_prompt_avoid_first_names():
     return prompt + "\n"
 
 
-def generate_profile_and_tags(
-    url="http://localhost:11434/api/generate", tags_sexuality=[]
-):
+def generate_profile_and_tags(url=settings.TAINDER_OLLAMA_URL, tags_sexuality=[]):
     # Genera los datos del perfil usando la IA.
     prompt = generate_profile_prompt()
     prompt_tags, tags = generate_prompt_tags(tags_sexuality)
@@ -133,7 +132,7 @@ def generate_profile_and_tags(
     response = requests.post(
         url=url,
         json={
-            "model": "gemma3:latest",
+            "model": settings.TAINDER_OLLAMA_MODEL,
             "prompt": prompt,
             "stream": False,
             "format": "json",
