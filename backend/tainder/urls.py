@@ -37,7 +37,7 @@ router.register(r"messages", MessageViewSet, basename="message")
 # ViewSet que mantienen queryset estático
 router.register(r"tags", TagViewSet)
 router.register(r"tag-categories", TagCategoryViewSet)
-router.register(r"aies", AiViewSet)
+router.register(r"ais", AiViewSet)
 
 
 urlpatterns = [
