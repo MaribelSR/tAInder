@@ -49,7 +49,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--wait",
             type=int,
-            default=10,
+            default=3,
             nargs="?",
             help="How many seconds to wait after no tasks; default 10",
         )
