@@ -21,10 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-c5n528&!csoi5ah+_4dv%c@z^-6m(7mkh-5*m#%ksp+%80l@!-"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-c5n528&!csoi5ah+_4dv%c@z^-6m(7mkh-5*m#%ksp+%80l@!-",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ["*"]  # Allow all hosts for development; change in production.
 
@@ -79,8 +82,14 @@ WSGI_APPLICATION = "tainder.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.environ.get(
+            "DJANGO_DATABASE_ENGINE", "django.db.backends.sqlite3"
+        ),
+        "NAME": os.environ.get("DJANGO_DATABASE_NAME", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("DJANGO_DATABASE_USER", ""),
+        "PASSWORD": os.environ.get("DJANGO_DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("DJANGO_DATABASE_HOST", ""),
+        "PORT": os.environ.get("DJANGO_DATABASE_PORT", ""),
     }
 }
 
@@ -122,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = os.environ.get("DJANGO_STATIC_URL", "static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
