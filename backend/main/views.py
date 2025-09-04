@@ -40,7 +40,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
             # Si no existe el usuario, devuelve solo los perfiles de Ais.
             return Profile.objects.filter(user__isnull=True)
 
-    @action(detail=False, methods=["get"], name="Next AI Profile without Match")
+    @action(detail=False, methods=["get"],
+            name="Next AI Profile without Match")
     def next_ai_profile_without_match(self, request):
         ai_profiles_id_already_matched = Match.objects.filter(
             user_profile=request.user.profile
@@ -51,7 +52,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
             .order_by("?")
             .first()
         )
-        serializer = self.get_serializer(ai_profile)
+        if not ai_profile:
+            return Response(status=404)
+        serializer = ProfilePublicSerializer(ai_profile)
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
@@ -126,8 +129,10 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            # Solo podra ver los mensajes cuando hay match y el usuario esta entre los perfiles.
-            user_matches = Match.objects.filter(user_profile=self.request.user.profile)
+            # Solo podra ver los mensajes cuando hay match y el usuario esta
+            # entre los perfiles.
+            user_matches = Match.objects.filter(
+                    user_profile=self.request.user.profile)
             return Message.objects.filter(match__in=user_matches)
         except User.DoesNotExist:
             # No devuelve mensaje al no ser uno de los perfiles de match.
