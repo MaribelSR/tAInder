@@ -5,13 +5,8 @@ from main.models import Profile, Tag, TagCategory, User, Ai, Match, Message
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = [
-            "id",
-            "height",
-            "birthday",
-            "description",
-            "tags",
-        ]
+        fields = ["id", "height", "birthday", "description", "user", "ai",
+                  "tags"]
 
 
 class TagCategorySerializer(serializers.ModelSerializer):
@@ -100,7 +95,8 @@ class ProfilePublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields = ["id", "height", "birthday", "description", "user", "ai",
+                  "tags"]
 
 
 class MatchSerializer(serializers.ModelSerializer):
