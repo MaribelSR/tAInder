@@ -73,8 +73,8 @@ class AiSerializer(serializers.ModelSerializer):
 
 class ProfileNestedSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
-    user_set = UserSerializer(many=True)
-    ai_set = AiSerializer(many=True)
+    user = UserSerializer()
+    ai = AiSerializer()
 
     class Meta:
         model = Profile

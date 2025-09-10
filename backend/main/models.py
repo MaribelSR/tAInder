@@ -49,30 +49,30 @@ class Profile(models.Model):
     tags = models.ManyToManyField(Tag)
 
     def is_from_user(self):
-        return self.user_set.count() > 0
+        return hasattr(self, "user")
 
     def is_from_ai(self):
-        return self.ai_set.count() > 0
+        return hasattr(self, "ai")
 
     def __str__(self):
         if self.is_from_user():
-            user = self.user_set.first()
             return "{username} ({last_name}, {first_name})".format(
-                username=user.username,
-                last_name=user.last_name,
-                first_name=user.first_name,
+                username=self.user.username,
+                last_name=self.user.last_name,
+                first_name=self.user.first_name,
             )
         elif self.is_from_ai():
-            ai = self.ai_set.first()
             return "{username} ({last_name}, {first_name})".format(
-                username=ai.username, last_name=ai.last_name, first_name=ai.first_name
+                username=self.ai.username,
+                last_name=self.ai.last_name,
+                first_name=self.ai.first_name,
             )
         else:
             return str(self.id)
 
 
 class User(AbstractUser):
-    profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return "{username} ({last_name}, {first_name})".format(
@@ -90,7 +90,7 @@ class Ai(models.Model):
     )
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-    profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name = "AI"

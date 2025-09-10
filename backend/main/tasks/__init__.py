@@ -40,7 +40,7 @@ def generate_message_reply(url=settings.TAINDER_OLLAMA_URL):
         if not last_msg:
             continue
         # Skip Match that last Message is from Ai
-        if last_msg.profile.ai_set.first():
+        if last_msg.profile.is_from_ai():
             print("Skip {} because the last message its from Ai".format(match))
             continue
 
@@ -112,9 +112,9 @@ def generate_match_summary(url=settings.TAINDER_OLLAMA_URL):
             prompt += "Resumen previo: {summary}\n".format(summary=match.summary)
         for msg in messages:
             if msg.profile.is_from_user():
-                username = msg.profile.user_set.first().username
+                username = msg.profile.user.username
             elif msg.profile.is_from_ai():
-                username = msg.profile.ai_set.first().username
+                username = msg.profile.ai.username
             else:
                 username = ""
             prompt += "{username}: {msg}\n".format(username=username, msg=msg.msg)

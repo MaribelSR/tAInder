@@ -35,13 +35,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         try:
             user = self.request.user
             # Devolver solo el usuario actual y perfiles de Ais.
-            return Profile.objects.filter(Q(user=user) | Q(user__isnull=True))
+            return Profile.objects.filter(Q(user=user) | Q(ai__isnull=False))
         except User.DoesNotExist:
             # Si no existe el usuario, devuelve solo los perfiles de Ais.
-            return Profile.objects.filter(user__isnull=True)
+            return Profile.objects.filter(ai__isnull=False)
 
-    @action(detail=False, methods=["get"],
-            name="Next AI Profile without Match")
+    @action(detail=False, methods=["get"], name="Next AI Profile without Match")
     def next_ai_profile_without_match(self, request):
         ai_profiles_id_already_matched = Match.objects.filter(
             user_profile=request.user.profile
@@ -131,8 +130,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         try:
             # Solo podra ver los mensajes cuando hay match y el usuario esta
             # entre los perfiles.
-            user_matches = Match.objects.filter(
-                    user_profile=self.request.user.profile)
+            user_matches = Match.objects.filter(user_profile=self.request.user.profile)
             return Message.objects.filter(match__in=user_matches)
         except User.DoesNotExist:
             # No devuelve mensaje al no ser uno de los perfiles de match.
