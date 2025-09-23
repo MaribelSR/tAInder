@@ -114,6 +114,7 @@ class Match(models.Model):
 
     class Meta:
         verbose_name_plural = "Matches"
+        unique_together = [["ai_profile", "user_profile"]]
 
     def __str__(self):
         return "Match: {ai_profile} - {user_profile}".format(
