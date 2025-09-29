@@ -2,10 +2,28 @@ from django.contrib import admin
 from .models import Profile, Message, Ai, Match, Tag, TagCategory, User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
+from django.http.response import HttpResponse
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    pass
+    change_list_template = "admin/profiles/change_list.html"
+
+    def generate_profile(self, a):
+        return HttpResponse(content="hola")
+
+    def get_urls(self):
+        from django.urls import path
+
+        urls = super().get_urls()
+        urls.insert(
+            0,
+            path(
+                route="generate_profile/",
+                view=self.generate_profile,
+                name="generate_profile",
+            ),
+        )
+        return urls
 
 
 class TagAdmin(admin.ModelAdmin):
