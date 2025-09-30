@@ -2,14 +2,19 @@ from django.contrib import admin
 from .models import Profile, Message, Ai, Match, Tag, TagCategory, User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
-from django.http.response import HttpResponse
-
+from django.contrib import messages
+from django.shortcuts import redirect
+from pipeline.models import Task
 
 class ProfileAdmin(admin.ModelAdmin):
     change_list_template = "admin/profiles/change_list.html"
 
-    def generate_profile(self, a):
-        return HttpResponse(content="hola")
+    def generate_profile(self, request):
+        Task.objects.create(def_name="main.tasks.generate_profile")
+        info = self.opts.app_label, self.opts.model_name
+        name = "admin:%s_%s_changelist" % info
+        messages.success(request,"A profile will be generated")
+        return redirect(name)
 
     def get_urls(self):
         from django.urls import path
